@@ -1,0 +1,69 @@
+﻿<header>
+	<div class="content-wrapper">
+		<div class="float-left">
+			<p class="site-title">
+				<a href="~/">HOSPITAL</a>
+			</p>
+		</div>
+	</div>
+
+	<style media="screen" type="text/css">
+		ol#patients {
+			list-style-type: decimal-leading-zero;
+		}
+	</style>
+
+</header>
+<div id="body">
+	<ol id="patients"></ol>
+</div>
+<form id="savePatientForm" method="post">
+	<h3>Insert new patient</h3>
+	<p>
+		<label id="patientId">Patient's Id:</label>
+		<input type="text" name="Id" />
+	</p>
+	<p>
+		<label id="patientName">Patient's Name:</label>
+		<input type="text" name="Name" />
+	</p>
+	<p>
+		<label id="patientCondition">Patient's Condition:</label>
+		<input type="text" name="Condition" />
+	</p>
+	<p>
+		<label id="patientImageId">Patient's ImageId:</label>
+		<input type="text" name="ImageId" />
+	</p>
+	<input type="button" id="savePatient" value="Save" />
+</form>
+
+@section scripts{
+	<script type="text/javascript">
+		$(function () {
+			$.getJSON('/api/patients', function (patientsJsonPayload) {
+				$(patientsJsonPayload).each(function (i, item) {
+					$('#patients').append('<li>' + item.Id + '</li>',
+						'<li>' + item.Name + '</li>',
+						'<li>' + item.Condition + '</li>',
+						'<li>' + item.ImageId + '</li>');
+				});
+			});
+		});
+
+		$('#savePatient').click(function () {
+			var nm = $('#patientName').val();
+			var id = $('#patientId').val();
+			var pc = $('#patientCondition').val();
+			var pi = $('#patientImageId').val();
+
+			$.post("api/patients/insert",
+				  $("#savePatientForm").serialize(),
+				  function (value) {
+				  	$('#patients').append('<li>' + value.Id + '</li>', '<li>' + value.Name + '</li>', '<li>' + value.Condition + '</li>', '<li>' + value.ImageId + '</li>');
+				  },
+				  "json"
+			);
+		});
+	</script>
+}
